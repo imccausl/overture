@@ -29,6 +29,7 @@
     "quotes": [
       "error",
       "single"
-    ]
+    ],
+    "no-console": "error"
   }
 }

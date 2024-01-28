@@ -64,12 +64,14 @@ function createChildElements<T extends Record<string, unknown>>(
 
 function createElement<T extends Record<string, unknown>>(
   type: ElementTypes<T>,
-  config?: PropsWithChildren<T>,
+  config?: null | PropsWithChildren<T>,
   ...childElements: undefined | Array<string | PrerenderedElement<T>>
 ): PrerenderedElement<PropsWithChildren<T>> {
   invariant(
     !childElements.length ||
-      !(typeof config.children === 'string' || Array.isArray(config.children)),
+      !(
+        typeof config?.children === 'string' || Array.isArray(config?.children)
+      ),
     'Cannot have children props and additional arguments to createElement'
   )
 
@@ -93,4 +95,8 @@ function createElement<T extends Record<string, unknown>>(
 // createElement('div', { id: 'app' }, createElement('h1', {}, 'Hello World')
 // createElement('div', { id: 'app' }, createElement('h1', {}, 'Hello World'), createElement('p', {}, 'Hello World'))
 
-export { createElement }
+const Overture = {
+  createElement,
+}
+
+export default Overture

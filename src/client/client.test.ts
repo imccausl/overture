@@ -1,10 +1,8 @@
-import { screen } from '@testing-library/dom'
-import { render } from '../testUtils/render.js'
-import { createElement } from './index.js'
+import Overture from './index.js'
 
 describe('creating elements', () => {
   it('creates an element object with tag name', () => {
-    const element = createElement('p', {})
+    const element = Overture.createElement('p', {})
     expect(element).toBe(
       expect.objectContaining({
         type: 'p',
@@ -15,13 +13,13 @@ describe('creating elements', () => {
   })
 
   it.only('creates an array of objects for children if passed as additional arguments', () => {
-    const element = createElement(
+    const element = Overture.createElement(
       'div',
       {},
-      createElement('p'),
-      createElement('span')
+      Overture.createElement('p'),
+      Overture.createElement('span')
     )
-    console.log(JSON.stringify(element, null, 2))
+
     expect(element.props.children).toEqual([
       expect.objectContaining({
         type: 'p',
@@ -44,9 +42,12 @@ describe('creating elements', () => {
     const props = {
       onClick: () => {},
     }
-    const element = createElement('div', props)
+    const element = Overture.createElement('div', props)
 
-    render(element)
-    screen.debug()
+    expect(element.props).toEqual(
+      expect.objectContaining({
+        onClick: props.onClick,
+      })
+    )
   })
 })

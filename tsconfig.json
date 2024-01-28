@@ -12,7 +12,9 @@
     "noEmit": true,
     "types": [
       "vitest/globals"
-    ]
+    ],
+    "jsx": "react",
+    "reactNamespace": "Overture"
   },
   "include": [
     "src",
