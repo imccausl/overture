@@ -1,3 +1,5 @@
+/** @jsx Overture.createElement */
+
 import Overture from './index.js'
 
 describe('creating elements', () => {
@@ -47,6 +49,26 @@ describe('creating elements', () => {
     expect(element.props).toEqual(
       expect.objectContaining({
         onClick: props.onClick,
+      })
+    )
+  })
+
+  it('handles function components', () => {
+    const Component = (props: { id: string; className: string }) =>
+      Overture.createElement('div', { ...props })
+    const AnotherComponent = (props: { id: string; className: string }) => (
+      <Component {...props} />
+    )
+    const element = Overture.createElement(AnotherComponent, {
+      id: 'test',
+      className: 'test-class',
+    })
+
+    expect(element).toEqual(
+      expect.objectContaining({
+        type: Component,
+        props: {},
+        _ref: undefined,
       })
     )
   })

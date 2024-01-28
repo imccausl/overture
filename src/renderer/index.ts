@@ -15,8 +15,9 @@ const removeInvalidAttributes = <T extends Record<string, unknown>>(
   return props
     ? Object.keys(props).reduce((acc, key) => {
         if (key === 'children') return acc
-        if (key === 'className') {
+        if (key.toLowerCase() === 'classname') {
           ;(acc as any)['class'] = props[key]
+          return acc
         }
 
         ;(acc as any)[key] = props[key]
@@ -54,17 +55,17 @@ const applyAttributes = <T extends Record<string, unknown>>(
 
 const renderElement = <T extends Record<string, unknown>>(
   element: PrerenderedElement<PropsWithChildren<T>>
-) => {
+): HTMLElement | Text => {
+  if (typeof element.type === 'function') {
+    return renderElement(element.type(element.props))
+  }
+
   let node = null
   if (typeof element.type === 'string') {
-    switch (element.type) {
-      case TEXT_ELEMENT:
-        node = document.createTextNode('')
-        break
-      default:
-        node = document.createElement(element.type)
-        break
-    }
+    node =
+      element.type === TEXT_ELEMENT
+        ? document.createTextNode('')
+        : document.createElement(element.type)
   }
 
   if (Array.isArray(element.props?.children)) {

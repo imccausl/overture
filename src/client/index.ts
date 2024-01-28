@@ -1,8 +1,10 @@
 import { invariant } from '../util/invariant.js'
 
-type ElementTypes<T> = string | ElementFn<T>
+type ElementTypes<T extends Record<string, unknown>> = string | ElementFn<T>
 
-type ElementFn<T> = (props: T) => ElementTypes<T>
+type ElementFn<T extends Record<string, unknown>> = (
+  props: T
+) => PrerenderedElement<T>
 
 // this is not right as the child props isn't going to be an array
 // of elements all witht he same props...
@@ -67,11 +69,14 @@ function createElement<T extends Record<string, unknown>>(
   config?: null | PropsWithChildren<T>,
   ...childElements: undefined | Array<string | PrerenderedElement<T>>
 ): PrerenderedElement<PropsWithChildren<T>> {
-  invariant(
+  const overlappingChildArgs =
     !childElements.length ||
-      !(
-        typeof config?.children === 'string' || Array.isArray(config?.children)
-      ),
+    !(
+      typeof config?.children === 'string' ||
+      (Array.isArray(config?.children) && config.children.length)
+    )
+  invariant(
+    overlappingChildArgs,
     'Cannot have children props and additional arguments to createElement'
   )
 
@@ -80,9 +85,10 @@ function createElement<T extends Record<string, unknown>>(
     children = undefined,
     ...restProps
   } = config ?? ({} as Partial<PropsWithChildren<T>>)
-  const childNodes = children
-    ? createChildElements(children)
-    : createChildElements(childElements)
+  const childNodes =
+    typeof children === 'string' || children?.length
+      ? createChildElements(children)
+      : createChildElements(childElements)
   const props: PropsWithChildren<T> = {
     children: childNodes,
     ...restProps,
@@ -90,10 +96,6 @@ function createElement<T extends Record<string, unknown>>(
 
   return Element({ type, props, _ref: ref })
 }
-
-// createElement('div', { id: 'app' }, 'Hello World')
-// createElement('div', { id: 'app' }, createElement('h1', {}, 'Hello World')
-// createElement('div', { id: 'app' }, createElement('h1', {}, 'Hello World'), createElement('p', {}, 'Hello World'))
 
 const Overture = {
   createElement,
