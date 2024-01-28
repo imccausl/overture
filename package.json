@@ -1,5 +1,5 @@
 {
-  "name": "freact",
+  "name": "overture",
   "packageManager": "yarn@4.0.2",
   "type": "module",
   "scripts": {
