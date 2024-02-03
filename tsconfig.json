@@ -17,8 +17,10 @@
     "reactNamespace": "Overture"
   },
   "include": [
-    "src",
-    "vitest.config.ts",
-    "config"
+    "*.config.ts",
+    "config",
+    "packages",
+    "example",
+    "external.d.ts",
   ]
 }

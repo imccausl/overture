@@ -14,7 +14,7 @@ describe('creating elements', () => {
     )
   })
 
-  it.only('creates an array of objects for children if passed as additional arguments', () => {
+  it('creates an array of objects for children if passed as additional arguments', () => {
     const element = Overture.createElement(
       'div',
       {},

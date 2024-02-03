@@ -1,9 +1,13 @@
 /** @jsx Overture.createElement */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Overture from '../client/index.js'
+import Overture, { type PropsWithChildren } from '@overture/core'
 import { screen, within } from '@testing-library/dom'
-import { render } from '../testUtils/render.js'
+import { render } from '@overture/test-utils'
 import { userEvent } from '@testing-library/user-event'
+
+afterEach(() => {
+  document.body.innerHTML = ''
+})
 
 it('renders an element to the DOM', () => {
   render(<h1 data-testid="hello">hello world</h1>)
@@ -60,4 +64,21 @@ it.only('renders a tree that contains functional components', () => {
   expect(screen.getByTestId('root-element')).toHaveTextContent('Hello world')
   expect(screen.getByTestId('root-element')).toHaveAttribute('id', 'sub')
   expect(screen.getByTestId('root-element')).toHaveClass('sub')
+})
+
+it('renders functional components with children', () => {
+  const Component = ({
+    children,
+  }: PropsWithChildren<Record<string, never>>) => (
+    <div data-testid="root-element">{children}</div>
+  )
+
+  render(
+    <Component>
+      <h1>Hello world</h1>
+      <p>Some other child</p>
+    </Component>
+  )
+
+  expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
 })

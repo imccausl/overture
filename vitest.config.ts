@@ -4,8 +4,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['src/**/*.test.*'],
-    exclude: ['src/**/node_modules/**/*', 'src/**/*.snap.*'],
+    include: ['packages/**/*/*.test.*'],
+    exclude: ['node_modules/**/*', 'packages/**/*/*.snap.*'],
     setupFiles: ['config/setupTests.ts'],
   },
 })

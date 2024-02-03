@@ -1,5 +1,5 @@
-import { createRoot } from '../renderer/index.js'
-import type { PrerenderedElement } from '../client/index.js'
+import { createRoot } from '@overture/renderer'
+import type { PrerenderedElement } from '@overture/core'
 
 export const render = <T extends Record<string, unknown>>(
   element: PrerenderedElement<T>

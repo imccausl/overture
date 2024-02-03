@@ -1,8 +1,14 @@
 import { invariant } from '../util/invariant.js'
+import { TEXT_ELEMENT } from 'shared'
 
 type ElementTypes<T extends Record<string, unknown>> = string | ElementFn<T>
 
-type ElementFn<T extends Record<string, unknown>> = (
+export interface PrerenderedFunctionalElement<T extends Record<string, unknown>>
+  extends PrerenderedElement<T> {
+  type: ElementFn<T>
+}
+
+export type ElementFn<T extends Record<string, unknown>> = (
   props: T
 ) => PrerenderedElement<T>
 
@@ -21,8 +27,6 @@ export type PrerenderedElement<T extends Record<string, unknown>> = {
   props: T
   _ref: any
 }
-
-export const TEXT_ELEMENT = 'TEXT_ELEMENT'
 
 function Element<T extends Record<string, unknown>>({
   type,
@@ -79,7 +83,6 @@ function createElement<T extends Record<string, unknown>>(
     overlappingChildArgs,
     'Cannot have children props and additional arguments to createElement'
   )
-
   const {
     ref = undefined,
     children = undefined,
@@ -88,7 +91,7 @@ function createElement<T extends Record<string, unknown>>(
   const childNodes =
     typeof children === 'string' || children?.length
       ? createChildElements(children)
-      : createChildElements(childElements)
+      : createChildElements(childElements.flat()) // jsx passes in an array of an array of elements
   const props: PropsWithChildren<T> = {
     children: childNodes,
     ...restProps,
