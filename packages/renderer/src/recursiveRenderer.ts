@@ -1,21 +1,24 @@
-import { PrerenderedElement, PropsWithChildren } from '@overture/core'
+import { type PrerenderedElement, type PropsWithChildren } from '@overture/core'
 import { isFunctionalComponent } from '@overture/core/typeguards'
-import { createDOM, applyAttributes } from './DOMUtils.js'
-import { renderFunctionalComponent } from './reconciler.js'
+import { HookDispatcher } from 'shared'
+
+import { applyAttributes, createDOM } from './DOMUtils.js'
+
 export const recursivelyRenderElement = <T extends Record<string, unknown>>(
-  element: PrerenderedElement<PropsWithChildren<T>>
+    element: PrerenderedElement<PropsWithChildren<T>>,
 ): HTMLElement | Text => {
-  if (isFunctionalComponent(element)) {
-    return recursivelyRenderElement(renderFunctionalComponent(element))
-  }
-
-  const node = createDOM(element)
-
-  if (Array.isArray(element.props?.children)) {
-    for (const child of element.props.children) {
-      node.appendChild(recursivelyRenderElement(child))
+    let node = null
+    console.log({ element })
+    if (typeof element.type === 'string') {
+        node = createDOM(element)
     }
-  }
 
-  return applyAttributes(node, element.props)
+    if (Array.isArray(element.props?.children)) {
+        for (const child of element.props.children) {
+            console.log({ child })
+            node.appendChild(recursivelyRenderElement(child))
+        }
+    }
+
+    return applyAttributes(node, element.props)
 }

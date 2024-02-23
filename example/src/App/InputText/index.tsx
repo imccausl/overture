@@ -3,10 +3,10 @@
 import Overture from '@overture/core'
 
 export const InputText = ({ label }: { label: string }) => {
-  return (
-    <label>
-      {label}
-      <input type="text" />
-    </label>
-  )
+    return (
+        <label>
+            {label}
+            <input type="text" />
+        </label>
+    )
 }

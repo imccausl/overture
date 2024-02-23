@@ -1,4 +1,9 @@
-import Overture from './element/index.js'
+import { createElement } from './element/index.js'
+import * as hooks from './hooks/index.js'
 
-export * from './element/index.js'
-export default Overture
+export type * from './element/index.js'
+
+export default {
+    createElement,
+    ...hooks,
+}
