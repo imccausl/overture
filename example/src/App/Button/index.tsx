@@ -1,8 +1,6 @@
 /** @jsx Overture.createElement */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Overture, {
-    type PropsWithChildren,
-} from '../../../../packages/core/src/element/index.js'
+import Overture, { type PropsWithChildren } from '@overture/core'
 
 type ButtonProps = PropsWithChildren<{
     onClick: () => void

@@ -68,7 +68,7 @@ describe('creating elements', () => {
 
         expect(element).toEqual(
             expect.objectContaining({
-                type: AnotherComponent,
+                type: 'div',
                 props: {
                     children: [],
                     className: 'test-class',

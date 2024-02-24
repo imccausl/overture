@@ -8,7 +8,6 @@ import { userEvent } from '@testing-library/user-event'
 const TestComponent = () => {
     const [count, setCount] = Overture.useState(0)
     const myVariable = 'hello, world'
-    // console.log({ count })
     return (
         <div>
             <p>Count: {count}</p>
@@ -25,7 +24,7 @@ afterEach(() => {
 it('updates state on button click', async () => {
     const user = userEvent.setup()
     render(<TestComponent />)
-
+    screen.debug()
     // expect(screen.getByText('Count: 0')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /increase count/i }))
     // expect(screen.getByText('Count: 1')).toBeInTheDocument()

@@ -17,7 +17,7 @@ export const rerender = () => {
     if (rootComponent === null) {
         throw new Error('No component has been rendered yet')
     }
-
+    console.log({ rootComponent })
     renderFunc(rootComponent)
 }
 

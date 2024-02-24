@@ -3,7 +3,12 @@ import * as hooks from './hooks/index.js'
 
 export type * from './element/index.js'
 
-export default {
+const { useState } = hooks
+
+const Overture = {
     createElement,
     ...hooks,
 }
+
+export default Overture
+export { useState }

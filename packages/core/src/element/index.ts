@@ -1,4 +1,4 @@
-import { TEXT_ELEMENT } from 'shared'
+import { HookDispatcher, TEXT_ELEMENT } from 'shared'
 
 import { invariant } from '../util/invariant.js'
 
@@ -29,6 +29,7 @@ export interface PrerenderedElement<T extends Record<string, unknown>> {
     type: string | ElementFn<T>
     props: T
     _ref: any
+    rerender?: Generator<PrerenderedElement<T>>
 }
 
 function Element<T extends Record<string, unknown>>({
@@ -40,21 +41,32 @@ function Element<T extends Record<string, unknown>>({
     props: PropsWithChildren<T>
     _ref: any
 }): PrerenderedElement<T> {
-    if (typeof type === 'function') {
-        return type(props)
-    }
-
-    return {
+    const element: PrerenderedElement<T> = {
         type,
         props: { ...props },
         _ref,
     }
+
+    if (typeof type === 'function') {
+        element.rerender = (function* () {
+            while (true) {
+                HookDispatcher.resetHooks()
+                let element = type(props)
+                const newProps = yield element
+                if (newProps) {
+                    element = type(newProps as T)
+                }
+            }
+        })()
+    }
+
+    return element
 }
 
 function createChildElements<T extends Record<string, unknown>>(
     childNodes: string | (string | PrerenderedElement<T>)[],
 ) {
-    if (typeof childNodes === 'string') {
+    if (typeof childNodes !== 'object') {
         return Element({
             type: TEXT_ELEMENT,
             props: { nodeValue: childNodes },
@@ -63,10 +75,11 @@ function createChildElements<T extends Record<string, unknown>>(
     }
 
     return childNodes?.map((child) => {
-        if (typeof child === 'string') {
+        console.log({ child })
+        if (typeof child !== 'object') {
             return Element({
                 type: TEXT_ELEMENT,
-                props: { nodeValue: child },
+                props: { nodeValue: `${child}` },
                 _ref: undefined,
             })
         }
@@ -80,7 +93,6 @@ export function createElement<T extends Record<string, unknown>>(
     config?: null | PropsWithChildren<T>,
     ...childElements: undefined | (string | PrerenderedElement<T>)[]
 ): PrerenderedElement<PropsWithChildren<T>> {
-    console.log({ type, config, children: [...childElements] })
     const overlappingChildArgs =
         !childElements.length ||
         !(
@@ -97,7 +109,8 @@ export function createElement<T extends Record<string, unknown>>(
         ...restProps
     } = config ?? ({} as Partial<PropsWithChildren<T>>)
     const childNodes =
-        typeof children === 'string' || children?.length
+        (children !== undefined && typeof children !== 'object') ||
+        children?.length
             ? createChildElements(children)
             : createChildElements(childElements.flat()) // jsx passes in an array of an array of elements
     const props: PropsWithChildren<T> = {
