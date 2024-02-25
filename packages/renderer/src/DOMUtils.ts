@@ -1,27 +1,31 @@
-import type { Fiber } from './types.js'
-
 import { type PrerenderedElement } from '@overture/core'
 import { TEXT_ELEMENT } from 'shared'
-
-export const createDOM = <T extends Record<string, unknown>>(
-    element: PrerenderedElement<T> | Fiber<T>,
-) => {
-    if (typeof element.type !== 'string') return null
-
-    return element.type === TEXT_ELEMENT
-        ? document.createTextNode('')
-        : document.createElement(element.type)
-}
 
 import {
     isValidHTMLAttribute,
     removeInvalidAttributes,
 } from './HTMLValidators.js'
 
-export const applyAttributes = <T extends Record<string, unknown>>(
+import type { Fiber } from './fastRenderer.js'
+
+export const createDOM = <T extends Record<string, unknown>>(
+    element: PrerenderedElement<T> | Fiber<T>,
+) => {
+    if (typeof element.type !== 'string')
+        throw new Error('Invalid element type')
+
+    const dom =
+        element.type === TEXT_ELEMENT
+            ? document.createTextNode('')
+            : document.createElement(element.type)
+
+    return applyAttributes(dom, element.props)
+}
+
+function applyAttributes<T extends Record<string, unknown>>(
     element: HTMLElement | Text,
     props: T | null | undefined,
-) => {
+) {
     const validProps = removeInvalidAttributes(props)
     if (!validProps) return element
 

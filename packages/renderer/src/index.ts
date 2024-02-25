@@ -1,4 +1,4 @@
-import { recursivelyRenderElement } from './recursiveRenderer.js'
+import { fastRenderer } from './fastRenderer.js'
 
 import type { PrerenderedElement } from '../../core/src/element/index.js'
 
@@ -17,19 +17,21 @@ export const rerender = () => {
     if (rootComponent === null) {
         throw new Error('No component has been rendered yet')
     }
-    console.log({ rootComponent })
-    renderFunc(rootComponent)
+    // renderFunc(rootComponent)
 }
 
 const createRootWithRenderer = <T extends Record<string, unknown>>(
-    rootElement: HTMLElement,
-    renderer: (component: PrerenderedElement<T>) => HTMLElement | Text,
+    container: HTMLElement,
+    renderer: (
+        component: PrerenderedElement<T>,
+        container: HTMLElement,
+    ) => void,
 ) => {
-    element = rootElement
+    element = container
     renderFunc = (component: PrerenderedElement<T>) => {
         rootComponent = component
         element.innerHTML = ''
-        element.appendChild(renderer(component))
+        renderer(component, element)
     }
     return {
         render: renderFunc,
@@ -37,5 +39,7 @@ const createRootWithRenderer = <T extends Record<string, unknown>>(
 }
 
 export const createRoot = <T extends Record<string, unknown>>(
-    element: HTMLElement,
-) => createRootWithRenderer<T>(element, recursivelyRenderElement)
+    container: HTMLElement,
+) => createRootWithRenderer<T>(container, fastRenderer)
+
+export type { Fiber } from './fastRenderer.js'

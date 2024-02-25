@@ -1,4 +1,4 @@
-import { HookDispatcher, TEXT_ELEMENT } from 'shared'
+import { TEXT_ELEMENT } from 'shared'
 
 import { invariant } from '../util/invariant.js'
 
@@ -29,7 +29,6 @@ export interface PrerenderedElement<T extends Record<string, unknown>> {
     type: string | ElementFn<T>
     props: T
     _ref: any
-    rerender?: Generator<PrerenderedElement<T>>
 }
 
 function Element<T extends Record<string, unknown>>({
@@ -47,19 +46,6 @@ function Element<T extends Record<string, unknown>>({
         _ref,
     }
 
-    if (typeof type === 'function') {
-        element.rerender = (function* () {
-            while (true) {
-                HookDispatcher.resetHooks()
-                let element = type(props)
-                const newProps = yield element
-                if (newProps) {
-                    element = type(newProps as T)
-                }
-            }
-        })()
-    }
-
     return element
 }
 
@@ -75,7 +61,6 @@ function createChildElements<T extends Record<string, unknown>>(
     }
 
     return childNodes?.map((child) => {
-        console.log({ child })
         if (typeof child !== 'object') {
             return Element({
                 type: TEXT_ELEMENT,

@@ -2,6 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Overture, { useState } from '@overture/core'
 
+import AnotherCounter from './AnotherCounter.js'
 import { Button } from './Button/index.js'
 import { InputText } from './InputText/index.js'
 
@@ -13,7 +14,7 @@ const App = () => {
     const [counter, setCounter] = useState(0)
     const [name, setName] = useState('')
     const [funFact, setFunFact] = useState('')
-    console.log({ name, funFact })
+
     return (
         <main>
             <h1>Hello World</h1>
@@ -35,6 +36,7 @@ const App = () => {
                     onChange={handleOnChange(setFunFact)}
                 />
             </div>
+            <AnotherCounter />
         </main>
     )
 }

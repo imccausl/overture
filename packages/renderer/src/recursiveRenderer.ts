@@ -1,8 +1,8 @@
 import { type PrerenderedElement, type PropsWithChildren } from '@overture/core'
 
-import { applyAttributes, createDOM } from './DOMUtils.js'
+import { createDOM } from './DOMUtils.js'
 
-export const recursivelyRenderElement = <T extends Record<string, unknown>>(
+const recursivelyRenderElement = <T extends Record<string, unknown>>(
     element: PrerenderedElement<PropsWithChildren<T>>,
 ): HTMLElement | Text => {
     if ('rerender' in element) {
@@ -11,7 +11,7 @@ export const recursivelyRenderElement = <T extends Record<string, unknown>>(
         )
     }
 
-    const node = typeof element.type === 'string' ? createDOM(element) : null
+    const node = createDOM(element)
 
     if (Array.isArray(element.props?.children)) {
         for (const child of element.props.children) {
@@ -19,5 +19,12 @@ export const recursivelyRenderElement = <T extends Record<string, unknown>>(
         }
     }
 
-    return applyAttributes(node, element.props)
+    return node
+}
+
+export const recursiveRenderer = <T extends Record<string, unknown>>(
+    element: PrerenderedElement<PropsWithChildren<T>>,
+    container: HTMLElement,
+) => {
+    container.appendChild(recursivelyRenderElement(element))
 }
